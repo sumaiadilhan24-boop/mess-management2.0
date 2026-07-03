@@ -12,6 +12,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const [mess, setMess] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as "dark" | "light";
@@ -138,8 +139,44 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="fixed inset-0 flex flex-col md:flex-row bg-zinc-950 text-zinc-50 overflow-hidden">
+      {/* Mobile Top Header */}
+      <header className="flex md:hidden items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900/50 backdrop-blur shrink-0 z-20">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-lg text-white">
+            M
+          </div>
+          <div>
+            <h2 className="font-semibold text-sm leading-tight text-white">{mess?.name || "My Mess"}</h2>
+            <span className="text-[10px] text-indigo-400 font-medium tracking-wide uppercase block">
+              {profile.role === "super_admin" ? "Super Admin" : "Member"}
+            </span>
+          </div>
+        </div>
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="p-2 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50 transition-colors"
+          aria-label="Toggle Sidebar"
+        >
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </header>
+
+      {/* Sidebar Overlay for Mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden animate-fade-in"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar Navigation */}
-      <aside className="w-full md:w-64 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur flex flex-col shrink-0">
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-64 border-r border-zinc-800 bg-zinc-900/95 backdrop-blur flex flex-col shrink-0 transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         {/* Header Branding */}
         <div className="p-6 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -153,6 +190,16 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
               </span>
             </div>
           </div>
+          {/* Mobile Close Button */}
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="p-1 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 md:hidden"
+            aria-label="Close Sidebar"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
         {/* Navigation Links */}
@@ -163,6 +210,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
               <Link
                 key={link.name}
                 href={link.href}
+                onClick={() => setIsSidebarOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   isActive
                     ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/10"
@@ -175,17 +223,6 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
-
-        {/* Theme Toggle Widget (Hidden for now) */}
-        {/* <div className="p-4 border-t border-zinc-800/80 bg-zinc-950/20 flex items-center justify-between shrink-0">
-          <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider font-sans">Theme Mode</span>
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-950 hover:bg-zinc-800 text-xs font-bold text-zinc-300 transition-colors border border-zinc-800/60 font-sans cursor-pointer"
-          >
-            {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
-          </button>
-        </div> */}
 
         {/* User profile footer */}
         <div className="p-4 border-t border-zinc-800 bg-zinc-950/40 flex items-center justify-between shrink-0">
