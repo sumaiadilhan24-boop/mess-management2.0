@@ -28,15 +28,38 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         .single();
 
       if (profileError || !profileData) {
-        console.error("Error fetching profile:", profileError);
-        setLoading(false);
-        return;
+        // Auto-recover missing profile record
+        const { data: recoveredProfile, error: recoverError } = await supabase
+          .from("profiles")
+          .insert({
+            id: session.user.id,
+            email: session.user.email || "",
+            full_name: "Admin User",
+            role: "super_admin",
+          })
+          .select()
+          .single();
+
+        if (!recoverError && recoveredProfile) {
+          setProfile(recoveredProfile);
+          router.push("/signup"); // Redirect to recreate mess name
+          return;
+        } else {
+          // Clean up bad session state and force redirect to login
+          await supabase.auth.signOut();
+          router.push("/login");
+          return;
+        }
+      } else {
+        setProfile(profileData);
+        if (!profileData.mess_id) {
+          router.push("/signup");
+          return;
+        }
       }
 
-      setProfile(profileData);
-
       // If user belongs to a mess, fetch mess details
-      if (profileData.mess_id) {
+      if (profileData?.mess_id) {
         const { data: messData } = await supabase
           .from("messes")
           .select("*")
@@ -91,12 +114,13 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     { name: "Bazar & Costs", href: "/dashboard/costs", icon: "🛒" },
     { name: "Deposits", href: "/dashboard/deposits", icon: "💵" },
     { name: "Members", href: "/dashboard/members", icon: "👥" },
+    { name: "Settings", href: "/dashboard/settings", icon: "⚙️" },
   ];
 
   return (
-    <div className="flex-1 flex flex-col md:flex-row bg-zinc-950 text-zinc-50 min-h-screen">
+    <div className="fixed inset-0 flex flex-col md:flex-row bg-zinc-950 text-zinc-50 overflow-hidden">
       {/* Sidebar Navigation */}
-      <aside className="w-full md:w-64 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur flex flex-col">
+      <aside className="w-full md:w-64 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur flex flex-col shrink-0">
         {/* Header Branding */}
         <div className="p-6 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -113,7 +137,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Navigation Links */}
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -134,7 +158,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         </nav>
 
         {/* User profile footer */}
-        <div className="p-4 border-t border-zinc-800 bg-zinc-950/40 flex items-center justify-between">
+        <div className="p-4 border-t border-zinc-800 bg-zinc-950/40 flex items-center justify-between shrink-0">
           <div className="truncate pr-2">
             <p className="text-xs font-semibold text-zinc-200 truncate">{profile.full_name || "User"}</p>
             <p className="text-[10px] text-zinc-500 truncate">{profile.email}</p>
@@ -150,7 +174,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col overflow-y-auto">
+      <main className="flex-1 flex flex-col overflow-y-auto h-full">
         {children}
       </main>
     </div>

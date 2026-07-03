@@ -5,14 +5,9 @@ import { supabase } from "@/lib/supabase";
 
 export default function MembersPage() {
   const [profile, setProfile] = useState<any>(null);
-  const [mess, setMess] = useState<any>(null);
   const [members, setMembers] = useState<any[]>([]);
   const [invites, setInvites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  // Settings state
-  const [mealEntryRule, setMealEntryRule] = useState("anyone");
-  const [updatingSettings, setUpdatingSettings] = useState(false);
   
   // Form states
   const [inviteEmail, setInviteEmail] = useState("");
@@ -59,50 +54,12 @@ export default function MembersPage() {
       if (!profileData || !profileData.mess_id) return;
       setProfile(profileData);
 
-      // Fetch mess
-      const { data: messData } = await supabase
-        .from("messes")
-        .select("*")
-        .eq("id", profileData.mess_id)
-        .single();
-      
-      if (messData) {
-        setMess(messData);
-        setMealEntryRule(messData.meal_entry_rule || "anyone");
-      }
-
       await fetchMembersAndInvites(profileData.mess_id);
       setLoading(false);
     };
 
     init();
   }, []);
-
-  const handleUpdateSettings = async (rule: string) => {
-    if (!profile?.mess_id) return;
-    setUpdatingSettings(true);
-    setMealEntryRule(rule);
-    try {
-      const { error } = await supabase
-        .from("messes")
-        .update({ meal_entry_rule: rule })
-        .eq("id", profile.mess_id);
-
-      if (error) throw error;
-      
-      // Refresh local mess data
-      const { data: updatedMess } = await supabase
-        .from("messes")
-        .select("*")
-        .eq("id", profile.mess_id)
-        .single();
-      if (updatedMess) setMess(updatedMess);
-    } catch (err: any) {
-      alert("Error updating settings: " + err.message);
-    } finally {
-      setUpdatingSettings(false);
-    }
-  };
 
   const handleSendInvite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -180,208 +137,179 @@ export default function MembersPage() {
   const isSuperAdmin = profile?.role === "super_admin";
 
   return (
-    <div className="flex-1 p-6 md:p-8 space-y-8 bg-zinc-950 text-zinc-50 font-sans text-sm md:text-base">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="flex-1 bg-zinc-950 text-zinc-50 font-sans text-sm md:text-base flex flex-col h-full overflow-hidden">
+      {/* Sticky Upper Action Bar */}
+      <div className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-md px-6 py-6 md:px-8 border-b border-zinc-900 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Members & Role Management</h1>
           <p className="text-sm text-zinc-400">View mess members and invite new people to join</p>
         </div>
       </div>
 
-      {/* Mess Settings Card */}
-      <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/40 backdrop-blur max-w-2xl">
-        <h2 className="text-base font-semibold text-zinc-200 mb-2 font-sans">Mess Permissions Settings</h2>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <p className="text-sm text-zinc-300 font-sans">Who is allowed to enter meal logs?</p>
-            <p className="text-xs text-zinc-500 font-sans">Restricts meal recording permissions on the Meal Log page.</p>
-          </div>
-          <div>
-            {isSuperAdmin ? (
-              <select
-                value={mealEntryRule}
-                disabled={updatingSettings}
-                onChange={(e) => handleUpdateSettings(e.target.value)}
-                className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-200 py-2 px-3.5 rounded-lg cursor-pointer pr-10 appearance-none font-bold"
-              >
-                <option value="anyone">Anyone (Add for all members)</option>
-                <option value="member_self_only">Each member logs for themselves only</option>
-                <option value="admin_only">Only Super Admins</option>
-              </select>
-            ) : (
-              <span className="px-3 py-1 rounded-full bg-zinc-800 text-zinc-300 text-xs font-semibold font-sans">
-                {mealEntryRule === "admin_only" 
-                  ? "🔒 Only Super Admins" 
-                  : mealEntryRule === "member_self_only"
-                  ? "👤 Self Logging Only"
-                  : "🔓 Anyone in the Mess"}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        {/* Left Column: Invite Member Form */}
-        <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-6 backdrop-blur">
-          <div>
-            <h2 className="text-base font-semibold text-zinc-200 font-sans">Invite Member</h2>
-            <p className="text-xs text-zinc-500 font-sans font-medium">
-              {isSuperAdmin
-                ? "Send an invite to a member email address"
-                : "Only Super Admins can send invitations"}
-            </p>
-          </div>
-
-          <form onSubmit={handleSendInvite} className="space-y-4">
+      {/* Scrollable Page Content */}
+      <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          {/* Left Column: Invite Member Form */}
+          <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-6 backdrop-blur">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5 font-sans">Email Address</label>
-              <input
-                type="email"
-                required
-                disabled={!isSuperAdmin}
-                value={inviteEmail}
-                onChange={(e) => setInviteEmail(e.target.value)}
-                className="w-full bg-zinc-950/80 border border-zinc-800 px-3.5 py-2.5 rounded-lg text-zinc-200 placeholder:text-zinc-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm disabled:opacity-50 font-sans"
-                placeholder="name@example.com"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5 font-sans">Role</label>
-              <select
-                value={inviteRole}
-                onChange={(e) => setInviteRole(e.target.value)}
-                disabled={!isSuperAdmin}
-                className="w-full bg-zinc-950/80 border border-zinc-800 px-3.5 py-2.5 rounded-lg text-zinc-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm pr-10 appearance-none cursor-pointer font-sans"
-              >
-                <option value="member">Member</option>
-                <option value="super_admin">Super Admin</option>
-              </select>
-            </div>
-
-            {statusMsg && (
-              <p className={`text-xs font-sans ${statusMsg.startsWith("Error") ? "text-red-400" : "text-emerald-400"}`}>
-                {statusMsg}
+              <h2 className="text-base font-semibold text-zinc-200 font-sans">Invite Member</h2>
+              <p className="text-xs text-zinc-500 font-sans font-medium">
+                {isSuperAdmin
+                  ? "Send an invite to a member email address"
+                  : "Only Super Admins can send invitations"}
               </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={submitting || !isSuperAdmin}
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg text-sm shadow-md transition-colors disabled:opacity-50 font-sans"
-            >
-              {submitting ? "Inviting..." : "Invite Member"}
-            </button>
-          </form>
-        </div>
-
-        {/* Right Column: Active Members and Pending Invites List */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Active Members Table */}
-          <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur">
-            <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900/55">
-              <h2 className="font-semibold text-sm md:text-base text-zinc-200 font-sans">Active Members</h2>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-zinc-300 border-collapse">
-                <thead className="bg-zinc-950/80 text-xs text-zinc-400 border-b border-zinc-800 uppercase tracking-wider">
-                  <tr>
-                    <th className="px-6 py-3.5">Name</th>
-                    <th className="px-6 py-3.5">Email</th>
-                    <th className="px-6 py-3.5">Role</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-800/40">
-                  {members.map((m) => (
-                    <tr key={m.id} className="hover:bg-zinc-900/10 transition-colors text-sm md:text-base">
-                      <td className="px-6 py-4 font-bold text-white">{m.full_name || "Unnamed"}</td>
-                      <td className="px-6 py-4 text-zinc-400 font-medium">{m.email}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                          m.role === "super_admin"
-                            ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
-                            : "bg-zinc-800 text-zinc-300"
-                        }`}>
-                          {m.role === "super_admin" ? "Super Admin" : "Member"}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+
+            <form onSubmit={handleSendInvite} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-1.5 font-sans">Email Address</label>
+                <input
+                  type="email"
+                  required
+                  disabled={!isSuperAdmin}
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  className="w-full bg-zinc-950/80 border border-zinc-800 px-3.5 py-2.5 rounded-lg text-zinc-200 placeholder:text-zinc-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm disabled:opacity-50 font-sans"
+                  placeholder="name@example.com"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-1.5 font-sans">Role</label>
+                <select
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value)}
+                  disabled={!isSuperAdmin}
+                  className="w-full bg-zinc-950/80 border border-zinc-800 px-3.5 py-2.5 rounded-lg text-zinc-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm pr-10 appearance-none cursor-pointer font-sans"
+                >
+                  <option value="member">Member</option>
+                  <option value="super_admin">Super Admin</option>
+                </select>
+              </div>
+
+              {statusMsg && (
+                <p className={`text-xs font-sans ${statusMsg.startsWith("Error") ? "text-red-400" : "text-emerald-400"}`}>
+                  {statusMsg}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={submitting || !isSuperAdmin}
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg text-sm shadow-md transition-colors disabled:opacity-50 font-sans"
+              >
+                {submitting ? "Inviting..." : "Invite Member"}
+              </button>
+            </form>
           </div>
 
-          {/* Pending Invites Table */}
-          <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur">
-            <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900/55">
-              <h2 className="font-semibold text-sm md:text-base text-zinc-200 font-sans">Pending Invitations</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-zinc-300 border-collapse">
-                <thead className="bg-zinc-950/80 text-xs text-zinc-400 border-b border-zinc-800 uppercase tracking-wider">
-                  <tr>
-                    <th className="px-6 py-3.5">Email</th>
-                    <th className="px-6 py-3.5">Role</th>
-                    <th className="px-6 py-3.5">Signup Link (Autofill Email)</th>
-                    <th className="px-6 py-3.5 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-800/40">
-                  {invites.length === 0 ? (
+          {/* Right Column: Active Members and Pending Invites List */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Active Members Table */}
+            <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur">
+              <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900/55">
+                <h2 className="font-semibold text-sm md:text-base text-zinc-200 font-sans">Active Members</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm text-zinc-300 border-collapse">
+                  <thead className="bg-zinc-950/80 text-xs text-zinc-400 border-b border-zinc-800 uppercase tracking-wider">
                     <tr>
-                      <td colSpan={4} className="text-center py-8 text-zinc-500 text-sm">
-                        No pending invites.
-                      </td>
+                      <th className="px-6 py-3.5">Name</th>
+                      <th className="px-6 py-3.5">Email</th>
+                      <th className="px-6 py-3.5">Role</th>
                     </tr>
-                  ) : (
-                    invites.map((inv) => {
-                      const signupLink = `${baseUrl}/signup?token=${inv.token}`;
-                      return (
-                        <tr key={inv.id} className="hover:bg-zinc-900/10 transition-colors text-sm">
-                          <td className="px-6 py-4 font-bold text-white">{inv.email}</td>
-                          <td className="px-6 py-4">
-                            <span className="px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-300 text-xs font-semibold">
-                              {inv.role}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-2">
-                              <input
-                                type="text"
-                                readOnly
-                                value={signupLink}
-                                className="bg-zinc-950 text-xs border border-zinc-800 px-3 py-1.5 rounded w-52 text-zinc-400 font-sans"
-                              />
-                              <button
-                                onClick={() => {
-                                  navigator.clipboard.writeText(signupLink);
-                                  alert("Signup link copied to clipboard!");
-                                }}
-                                className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 px-3 rounded transition-colors font-sans"
-                              >
-                                Copy
-                              </button>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            {isSuperAdmin && (
-                              <button
-                                onClick={() => handleDeleteInvite(inv.id)}
-                                className="text-red-400 hover:text-red-300 hover:bg-red-500/10 p-1.5 rounded-md transition-colors"
-                                title="Cancel Invite"
-                              >
-                                🗑️
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-800/40">
+                    {members.map((m) => (
+                      <tr key={m.id} className="hover:bg-zinc-900/10 transition-colors text-sm md:text-base">
+                        <td className="px-6 py-4 font-bold text-white">{m.full_name || "Unnamed"}</td>
+                        <td className="px-6 py-4 text-zinc-400 font-medium">{m.email}</td>
+                        <td className="px-6 py-4">
+                          <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                            m.role === "super_admin"
+                              ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
+                              : "bg-zinc-800 text-zinc-300"
+                          }`}>
+                            {m.role === "super_admin" ? "Super Admin" : "Member"}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Pending Invites Table */}
+            <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur">
+              <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900/55">
+                <h2 className="font-semibold text-sm md:text-base text-zinc-200 font-sans">Pending Invitations</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm text-zinc-300 border-collapse">
+                  <thead className="bg-zinc-950/80 text-xs text-zinc-400 border-b border-zinc-800 uppercase tracking-wider">
+                    <tr>
+                      <th className="px-6 py-3.5">Email</th>
+                      <th className="px-6 py-3.5">Role</th>
+                      <th className="px-6 py-3.5">Signup Link (Autofill Email)</th>
+                      <th className="px-6 py-3.5 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-800/40">
+                    {invites.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="text-center py-8 text-zinc-500 text-sm">
+                          No pending invites.
+                        </td>
+                      </tr>
+                    ) : (
+                      invites.map((inv) => {
+                        const signupLink = `${baseUrl}/signup?token=${inv.token}`;
+                        return (
+                          <tr key={inv.id} className="hover:bg-zinc-900/10 transition-colors text-sm">
+                            <td className="px-6 py-4 font-bold text-white">{inv.email}</td>
+                            <td className="px-6 py-4">
+                              <span className="px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-300 text-xs font-semibold">
+                                {inv.role}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="text"
+                                  readOnly
+                                  value={signupLink}
+                                  className="bg-zinc-950 text-xs border border-zinc-800 px-3 py-1.5 rounded w-52 text-zinc-400 font-sans"
+                                />
+                                <button
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(signupLink);
+                                    alert("Signup link copied to clipboard!");
+                                  }}
+                                  className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 px-3 rounded transition-colors font-sans"
+                                >
+                                  Copy
+                                </button>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              {isSuperAdmin && (
+                                <button
+                                  onClick={() => handleDeleteInvite(inv.id)}
+                                  className="text-red-400 hover:text-red-300 hover:bg-red-500/10 p-1.5 rounded-md transition-colors"
+                                  title="Cancel Invite"
+                                >
+                                  🗑️
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

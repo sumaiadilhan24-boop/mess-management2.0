@@ -178,192 +178,196 @@ export default function MealsPage() {
   const dayRows = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   return (
-    <div className="flex-1 p-6 md:p-8 space-y-8 bg-zinc-950 text-zinc-50 font-sans text-sm md:text-base">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="flex-1 bg-zinc-950 text-zinc-50 font-sans text-sm md:text-base flex flex-col h-full overflow-hidden">
+      {/* Sticky Upper Action Bar */}
+      <div className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-md px-6 py-6 md:px-8 border-b border-zinc-900 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Meal Log</h1>
           <p className="text-xs md:text-sm text-zinc-400">Record daily meal counts and view monthly registers</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        {/* Left Column: Quick Daily Logger (Conditional on Permissions) */}
-        <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-6 backdrop-blur">
-          {isAllowedToLog ? (
-            <>
-              <div>
-                <h2 className="text-base font-semibold text-zinc-200 font-sans">Log Daily Meals</h2>
-                <p className="text-xs text-zinc-500 font-sans">
-                  {mess?.meal_entry_rule === "member_self_only" && profile?.role !== "super_admin"
-                    ? "Log meals for yourself on a specific day"
-                    : "Record meal counts for all members on a specific day"}
-                </p>
-              </div>
-
-              <div className="space-y-4">
+      {/* Scrollable Page Content */}
+      <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          {/* Left Column: Quick Daily Logger (Conditional on Permissions) */}
+          <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-6 backdrop-blur">
+            {isAllowedToLog ? (
+              <>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-400 mb-1.5 font-medium font-sans">Select Date</label>
-                  <input
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full bg-zinc-950/80 border border-zinc-800 px-3.5 py-2.5 rounded-lg text-zinc-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-sans"
-                  />
-                </div>
-
-                <div className="border-t border-zinc-800/80 pt-4 space-y-3.5">
-                  {membersToLog.map((member) => (
-                    <div key={member.id} className="flex items-center justify-between">
-                      <span className="text-sm text-zinc-200 font-bold font-sans">{member.full_name || "Unnamed"}</span>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          onClick={() => handleCountChange(member.id, Math.max(0, (dailyCounts[member.id] || 0) - 0.5))}
-                          className="w-9 h-9 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-950/60 flex items-center justify-center text-zinc-300 hover:text-white transition-colors text-lg font-bold font-sans"
-                        >
-                          -
-                        </button>
-                        <input
-                          type="number"
-                          step="0.5"
-                          min="0"
-                          value={dailyCounts[member.id] || 0}
-                          onChange={(e) => handleCountChange(member.id, Number(e.target.value))}
-                          className="w-14 text-center bg-zinc-950/80 border border-zinc-800 py-1.5 px-1 rounded-md text-sm font-bold text-white focus:outline-none focus:border-indigo-500 font-sans"
-                        />
-                        <button
-                          onClick={() => handleCountChange(member.id, (dailyCounts[member.id] || 0) + 0.5)}
-                          className="w-9 h-9 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-950/60 flex items-center justify-center text-zinc-300 hover:text-white transition-colors text-lg font-bold font-sans"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {statusMsg && (
-                  <p className={`text-xs font-sans ${statusMsg.startsWith("Error") ? "text-red-400" : "text-emerald-400"}`}>
-                    {statusMsg}
+                  <h2 className="text-base font-semibold text-zinc-200 font-sans">Log Daily Meals</h2>
+                  <p className="text-xs text-zinc-500 font-sans">
+                    {mess?.meal_entry_rule === "member_self_only" && profile?.role !== "super_admin"
+                      ? "Log meals for yourself on a specific day"
+                      : "Record meal counts for all members on a specific day"}
                   </p>
-                )}
+                </div>
 
-                <button
-                  onClick={handleSaveDailyMeals}
-                  disabled={saving}
-                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg text-sm shadow-md transition-colors disabled:opacity-50 font-sans"
-                >
-                  {saving ? "Saving..." : `Save Meals for ${selectedDate}`}
-                </button>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-400 mb-1.5 font-medium font-sans">Select Date</label>
+                    <input
+                      type="date"
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                      className="w-full bg-zinc-950/80 border border-zinc-800 px-3.5 py-2.5 rounded-lg text-zinc-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-sans"
+                    />
+                  </div>
+
+                  <div className="border-t border-zinc-800/80 pt-4 space-y-3.5">
+                    {membersToLog.map((member) => (
+                      <div key={member.id} className="flex items-center justify-between">
+                        <span className="text-sm text-zinc-200 font-bold font-sans">{member.full_name || "Unnamed"}</span>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => handleCountChange(member.id, Math.max(0, (dailyCounts[member.id] || 0) - 0.5))}
+                            className="w-9 h-9 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-950/60 flex items-center justify-center text-zinc-300 hover:text-white transition-colors text-lg font-bold font-sans"
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            step="0.5"
+                            min="0"
+                            value={dailyCounts[member.id] || 0}
+                            onChange={(e) => handleCountChange(member.id, Number(e.target.value))}
+                            className="w-14 text-center bg-zinc-950/80 border border-zinc-800 py-1.5 px-1 rounded-md text-sm font-bold text-white focus:outline-none focus:border-indigo-500 font-sans"
+                          />
+                          <button
+                            onClick={() => handleCountChange(member.id, (dailyCounts[member.id] || 0) + 0.5)}
+                            className="w-9 h-9 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-950/60 flex items-center justify-center text-zinc-300 hover:text-white transition-colors text-lg font-bold font-sans"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {statusMsg && (
+                    <p className={`text-xs font-sans ${statusMsg.startsWith("Error") ? "text-red-400" : "text-emerald-400"}`}>
+                      {statusMsg}
+                    </p>
+                  )}
+
+                  <button
+                    onClick={handleSaveDailyMeals}
+                    disabled={saving}
+                    className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg text-sm shadow-md transition-colors disabled:opacity-50 font-sans"
+                  >
+                    {saving ? "Saving..." : `Save Meals for ${selectedDate}`}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center text-center py-10 space-y-4">
+                <span className="text-3xl">🔒</span>
+                <div>
+                  <h3 className="font-semibold text-zinc-200 font-sans">Meal Log Restricted</h3>
+                  <p className="text-xs text-zinc-500 mt-1 font-sans">
+                    The mess manager has configured permissions so that only Super Admins are allowed to enter daily meal logs.
+                  </p>
+                </div>
               </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center text-center py-10 space-y-4">
-              <span className="text-3xl">🔒</span>
-              <div>
-                <h3 className="font-semibold text-zinc-200 font-sans">Meal Log Restricted</h3>
-                <p className="text-xs text-zinc-500 mt-1 font-sans">
-                  The mess manager has configured permissions so that only Super Admins are allowed to enter daily meal logs.
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right Column: Monthly Grid */}
-        <div className="lg:col-span-2 bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur flex flex-col h-[560px]">
-          <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900/55 flex justify-between items-center shrink-0">
-            <div>
-              <h2 className="font-semibold text-sm md:text-base text-zinc-200 font-sans">Monthly Ledger Overview</h2>
-              <p className="text-xs text-zinc-500 font-sans">Overview of active meals per day</p>
-            </div>
-
-            {/* Month selector */}
-            <div className="flex gap-2">
-              <select
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-300 py-1.5 px-3 rounded-lg cursor-pointer pr-8 appearance-none"
-              >
-                {months.map((m) => (
-                  <option key={m.value} value={m.value}>
-                    {m.name}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(Number(e.target.value))}
-                className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-300 py-1.5 px-3 rounded-lg cursor-pointer pr-8 appearance-none"
-              >
-                {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </select>
-            </div>
+            )}
           </div>
 
-          <div className="flex-1 overflow-auto">
-            <table className="w-full text-left text-sm text-zinc-300 border-collapse">
-              <thead className="bg-zinc-950/80 text-xs text-zinc-400 border-b border-zinc-800 uppercase tracking-wider sticky top-0 z-10">
-                <tr>
-                  <th className="px-4 py-3 bg-zinc-950">Day</th>
-                  {members.map((m) => (
-                    <th key={m.id} className="px-4 py-3 min-w-[90px]">
-                      {m.full_name || "Unnamed"}
-                    </th>
+          {/* Right Column: Monthly Grid */}
+          <div className="lg:col-span-2 bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur flex flex-col h-[560px]">
+            <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900/55 flex justify-between items-center shrink-0">
+              <div>
+                <h2 className="font-semibold text-sm md:text-base text-zinc-200 font-sans">Monthly Ledger Overview</h2>
+                <p className="text-xs text-zinc-500 font-sans">Overview of active meals per day</p>
+              </div>
+
+              {/* Month selector */}
+              <div className="flex gap-2">
+                <select
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                  className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-300 py-1.5 px-3 rounded-lg cursor-pointer pr-8 appearance-none"
+                >
+                  {months.map((m) => (
+                    <option key={m.value} value={m.value}>
+                      {m.name}
+                    </option>
                   ))}
-                  <th className="px-4 py-3 font-bold bg-zinc-950">Daily Total</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-800/40">
-                {dayRows.map((day) => {
-                  const dateStr = `${selectedYear}-${String(selectedMonth).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-                  let dailySum = 0;
-                  return (
-                    <tr key={day} className="hover:bg-zinc-900/10 transition-colors">
-                      <td className="px-4 py-2.5 font-bold text-zinc-400 bg-zinc-950/30">{day}</td>
-                      {members.map((m) => {
-                        const cellMeal = monthlyMeals.find((meal) => meal.profile_id === m.id && meal.date === dateStr);
-                        const countVal = cellMeal ? Number(cellMeal.count) : 0;
-                        dailySum += countVal;
-                        return (
-                          <td key={m.id} className="px-4 py-2.5 font-semibold">
-                            {countVal > 0 ? (
-                              <span className="text-zinc-200">{countVal}</span>
-                            ) : (
-                              <span className="text-zinc-700">-</span>
-                            )}
-                          </td>
-                        );
-                      })}
-                      <td className="px-4 py-2.5 font-bold text-indigo-400 bg-zinc-950/30">
-                        {dailySum > 0 ? dailySum : ""}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-              <tfoot className="bg-zinc-950/80 font-bold border-t border-zinc-800 uppercase text-xs tracking-wider sticky bottom-0 z-10">
-                <tr>
-                  <td className="px-4 py-3">Total</td>
-                  {members.map((m) => {
-                    const memberTotal = monthlyMeals
-                      .filter((meal) => meal.profile_id === m.id)
-                      .reduce((sum, meal) => sum + Number(meal.count || 0), 0);
+                </select>
+                <select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(Number(e.target.value))}
+                  className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-300 py-1.5 px-3 rounded-lg cursor-pointer pr-8 appearance-none"
+                >
+                  {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-auto">
+              <table className="w-full text-left text-sm text-zinc-300 border-collapse">
+                <thead className="bg-zinc-950/80 text-xs text-zinc-400 border-b border-zinc-800 uppercase tracking-wider sticky top-0 z-10">
+                  <tr>
+                    <th className="px-4 py-3 bg-zinc-950">Day</th>
+                    {members.map((m) => (
+                      <th key={m.id} className="px-4 py-3 min-w-[90px]">
+                        {m.full_name || "Unnamed"}
+                      </th>
+                    ))}
+                    <th className="px-4 py-3 font-bold bg-zinc-950">Daily Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-800/40">
+                  {dayRows.map((day) => {
+                    const dateStr = `${selectedYear}-${String(selectedMonth).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                    let dailySum = 0;
                     return (
-                      <td key={m.id} className="px-4 py-3 text-white text-base">
-                        {memberTotal}
-                      </td>
+                      <tr key={day} className="hover:bg-zinc-900/10 transition-colors">
+                        <td className="px-4 py-2.5 font-bold text-zinc-400 bg-zinc-950/30">{day}</td>
+                        {members.map((m) => {
+                          const cellMeal = monthlyMeals.find((meal) => meal.profile_id === m.id && meal.date === dateStr);
+                          const countVal = cellMeal ? Number(cellMeal.count) : 0;
+                          dailySum += countVal;
+                          return (
+                            <td key={m.id} className="px-4 py-2.5 font-semibold">
+                              {countVal > 0 ? (
+                                <span className="text-zinc-200">{countVal}</span>
+                              ) : (
+                                <span className="text-zinc-700">-</span>
+                              )}
+                            </td>
+                          );
+                        })}
+                        <td className="px-4 py-2.5 font-bold text-indigo-400 bg-zinc-950/30">
+                          {dailySum > 0 ? dailySum : ""}
+                        </td>
+                      </tr>
                     );
                   })}
-                  <td className="px-4 py-3 text-indigo-400 text-base">
-                    {monthlyMeals.reduce((sum, meal) => sum + Number(meal.count || 0), 0)}
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
+                </tbody>
+                <tfoot className="bg-zinc-950/80 font-bold border-t border-zinc-800 uppercase text-xs tracking-wider sticky bottom-0 z-10">
+                  <tr>
+                    <td className="px-4 py-3">Total</td>
+                    {members.map((m) => {
+                      const memberTotal = monthlyMeals
+                        .filter((meal) => meal.profile_id === m.id)
+                        .reduce((sum, meal) => sum + Number(meal.count || 0), 0);
+                      return (
+                        <td key={m.id} className="px-4 py-3 text-white text-base">
+                          {memberTotal}
+                        </td>
+                      );
+                    })}
+                    <td className="px-4 py-3 text-indigo-400 text-base">
+                      {monthlyMeals.reduce((sum, meal) => sum + Number(meal.count || 0), 0)}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
           </div>
         </div>
       </div>

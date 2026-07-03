@@ -208,9 +208,9 @@ export default function DashboardPage() {
     : members.filter((m) => m.id === profile?.id);
 
   return (
-    <div className="flex-1 p-6 md:p-8 space-y-8 bg-zinc-950 text-zinc-50 relative text-sm md:text-base">
-      {/* Upper Action Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="flex-1 bg-zinc-950 text-zinc-50 relative text-sm md:text-base flex flex-col h-full overflow-hidden">
+      {/* Sticky Upper Action Bar */}
+      <div className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-md px-6 py-6 md:px-8 border-b border-zinc-900 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
             {viewContext === "overall" ? "Overall Mess Summary" : `${currentViewMember?.full_name}'s Personal Status`}
@@ -223,14 +223,14 @@ export default function DashboardPage() {
         </div>
 
         {/* View Scope & Month / Year Selector */}
-        <div className="flex flex-wrap gap-2 items-center bg-zinc-900/60 p-1.5 rounded-xl border border-zinc-800 backdrop-blur">
+        <div className="flex flex-wrap gap-2 items-center bg-zinc-900/60 p-1.5 rounded-xl border border-zinc-800">
           {/* View Selector */}
-          <div className="flex items-center gap-1.5 border-r border-zinc-850 pr-2">
+          <div className="flex items-center gap-1.5 border-r border-zinc-800 pr-2">
             <span className="text-xs text-zinc-500 font-bold uppercase pl-1.5">View Scope:</span>
             <select
               value={viewContext}
               onChange={(e) => setViewContext(e.target.value)}
-              className="bg-transparent text-xs border-0 focus:ring-0 text-white py-1 px-3.5 rounded-lg hover:bg-zinc-800 cursor-pointer font-bold pr-8 appearance-none"
+              className="bg-transparent text-xs border-0 focus:ring-0 text-white py-1 px-3.5 rounded-lg hover:bg-zinc-850 cursor-pointer font-bold pr-8 appearance-none"
             >
               <option value="overall" className="bg-zinc-900 text-white font-bold">Overall Mess Status</option>
               {selectOptions.map((m) => (
@@ -268,114 +268,117 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl backdrop-blur flex flex-col justify-between">
-          <span className="text-xs md:text-sm text-zinc-400 font-medium">{cardTitleDeposit}</span>
-          <h3 className="text-xl md:text-3xl font-bold text-white mt-2">
-            {displayDeposit.toLocaleString()} <span className="text-xs md:text-sm font-normal text-zinc-500">TK</span>
-          </h3>
-        </div>
+      {/* Scrollable Page Content */}
+      <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
+        {/* Summary Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl backdrop-blur flex flex-col justify-between">
+            <span className="text-xs md:text-sm text-zinc-400 font-medium">{cardTitleDeposit}</span>
+            <h3 className="text-xl md:text-3xl font-bold text-white mt-2">
+              {displayDeposit.toLocaleString()} <span className="text-xs md:text-sm font-normal text-zinc-500">TK</span>
+            </h3>
+          </div>
 
-        <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl backdrop-blur flex flex-col justify-between">
-          <span className="text-xs md:text-sm text-zinc-400 font-medium">{cardTitleMealCost}</span>
-          <h3 className="text-xl md:text-3xl font-bold text-white mt-2">
-            {displayMealCost.toLocaleString()} <span className="text-xs md:text-sm font-normal text-zinc-500">TK</span>
-          </h3>
-        </div>
+          <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl backdrop-blur flex flex-col justify-between">
+            <span className="text-xs md:text-sm text-zinc-400 font-medium">{cardTitleMealCost}</span>
+            <h3 className="text-xl md:text-3xl font-bold text-white mt-2">
+              {displayMealCost.toLocaleString()} <span className="text-xs md:text-sm font-normal text-zinc-500">TK</span>
+            </h3>
+          </div>
 
-        <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl backdrop-blur flex flex-col justify-between">
-          <span className="text-xs md:text-sm text-zinc-400 font-medium">{cardTitleOtherCost}</span>
-          <h3 className="text-xl md:text-3xl font-bold text-white mt-2">
-            {displayOtherCost.toLocaleString()} <span className="text-xs md:text-sm font-normal text-zinc-500">TK</span>
-          </h3>
-        </div>
+          <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl backdrop-blur flex flex-col justify-between">
+            <span className="text-xs md:text-sm text-zinc-400 font-medium">{cardTitleOtherCost}</span>
+            <h3 className="text-xl md:text-3xl font-bold text-white mt-2">
+              {displayOtherCost.toLocaleString()} <span className="text-xs md:text-sm font-normal text-zinc-500">TK</span>
+            </h3>
+          </div>
 
-        <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl backdrop-blur flex flex-col justify-between">
-          <span className="text-xs md:text-sm text-zinc-400 font-medium">{cardTitleBalance}</span>
-          <h3 className={`text-xl md:text-3xl font-bold mt-2 ${isBalancePositive ? "text-emerald-400" : "text-red-400"}`}>
-            {displayBalance.toLocaleString()} <span className="text-xs md:text-sm font-normal text-zinc-500">TK</span>
-          </h3>
-        </div>
-      </div>
-
-      {/* Calculations Details Card */}
-      <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur">
-        <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900/55 flex flex-col sm:flex-row gap-2 justify-between sm:items-center">
-          <h2 className="font-semibold text-sm md:text-base text-zinc-200">Calculation Constants</h2>
-          <div className="flex gap-4 text-xs md:text-sm text-zinc-400">
-            <div>
-              Total Meals: <span className="text-white font-medium">{totalMeals}</span>
-            </div>
-            <div>
-              Meal Rate: <span className="text-indigo-400 font-semibold">{mealRate.toFixed(2)} TK</span>
-            </div>
+          <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl backdrop-blur flex flex-col justify-between">
+            <span className="text-xs md:text-sm text-zinc-400 font-medium">{cardTitleBalance}</span>
+            <h3 className={`text-xl md:text-3xl font-bold mt-2 ${isBalancePositive ? "text-emerald-400" : "text-red-400"}`}>
+              {displayBalance.toLocaleString()} <span className="text-xs md:text-sm font-normal text-zinc-500">TK</span>
+            </h3>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-zinc-300">
-            <thead className="bg-zinc-950/50 text-xs text-zinc-400 border-b border-zinc-800 uppercase tracking-wider">
-              <tr>
-                <th className="px-6 py-3.5">Name</th>
-                <th className="px-6 py-3.5">Meal Count</th>
-                <th className="px-6 py-3.5">Meal Cost Share</th>
-                <th className="px-6 py-3.5">Utilities Share</th>
-                <th className="px-6 py-3.5">Your Spending</th>
-                <th className="px-6 py-3.5">Net Balance</th>
-                <th className="px-6 py-3.5">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-800/60">
-              {summaryRows.map((row) => {
-                const isSelectedRow = row.profile.id === viewContext;
-                return (
-                  <tr 
-                    key={row.profile.id} 
-                    className={`hover:bg-zinc-900/20 transition-colors text-sm md:text-base ${
-                      isSelectedRow ? "bg-indigo-950/30 border-l-4 border-l-indigo-500" : ""
-                    }`}
-                  >
-                    <td className="px-6 py-4 font-bold text-white">
-                      {row.profile.full_name || "Unnamed"}
-                      {row.profile.id === profile?.id && <span className="text-xs text-indigo-400 font-normal ml-1.5 font-sans">(You)</span>}
-                    </td>
-                    <td className="px-6 py-4 font-semibold text-zinc-300">{row.meals}</td>
-                    <td className="px-6 py-4">{row.mealCostShare.toFixed(2)} TK</td>
-                    <td className="px-6 py-4">{row.otherCostShare.toFixed(2)} TK</td>
-                    <td className="px-6 py-4">{row.directSpending.toFixed(2)} TK</td>
-                    <td className={`px-6 py-4 font-bold ${row.balance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                      {row.balance >= 0 ? "+" : ""}
-                      {row.balance.toFixed(2)} TK
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
-                          row.status === "You will get paid"
-                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                            : row.status === "You have to pay"
-                            ? "bg-red-500/10 text-red-400 border border-red-500/20"
-                            : "bg-zinc-800 text-zinc-300"
-                        }`}
-                      >
-                        {row.status}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        {/* Calculations Details Card */}
+        <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur">
+          <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900/55 flex flex-col sm:flex-row gap-2 justify-between sm:items-center">
+            <h2 className="font-semibold text-sm md:text-base text-zinc-200">Calculation Constants</h2>
+            <div className="flex gap-4 text-xs md:text-sm text-zinc-400">
+              <div>
+                Total Meals: <span className="text-white font-medium">{totalMeals}</span>
+              </div>
+              <div>
+                Meal Rate: <span className="text-indigo-400 font-semibold">{mealRate.toFixed(2)} TK</span>
+              </div>
+            </div>
+          </div>
 
-      {/* Helpful Instructions */}
-      <div className="p-5 rounded-xl bg-zinc-900/20 border border-zinc-800 text-xs md:text-sm text-zinc-500 space-y-1.5">
-        <p className="font-semibold text-zinc-400">💡 Calculation Notes:</p>
-        <p>• Meal Rate = Total Meal Cost / Total Meal Count.</p>
-        <p>• Utilities Share = Calculated per transaction. Divided equally only among the members selected for that cost (custom splits), otherwise divided equally among all members.</p>
-        <p>• Your Spending represents all items you purchased directly on behalf of the mess using your own money.</p>
-        <p>• Net Balance = Your Spending - Meal Cost Share - Utilities Share. Positive balance means you will get paid back; negative means you have to pay the manager.</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-zinc-300">
+              <thead className="bg-zinc-950/50 text-xs text-zinc-400 border-b border-zinc-800 uppercase tracking-wider">
+                <tr>
+                  <th className="px-6 py-3.5">Name</th>
+                  <th className="px-6 py-3.5">Meal Count</th>
+                  <th className="px-6 py-3.5">Meal Cost Share</th>
+                  <th className="px-6 py-3.5">Utilities Share</th>
+                  <th className="px-6 py-3.5">Your Spending</th>
+                  <th className="px-6 py-3.5">Net Balance</th>
+                  <th className="px-6 py-3.5">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-800/60">
+                {summaryRows.map((row) => {
+                  const isSelectedRow = row.profile.id === viewContext;
+                  return (
+                    <tr 
+                      key={row.profile.id} 
+                      className={`hover:bg-zinc-900/20 transition-colors text-sm md:text-base ${
+                        isSelectedRow ? "bg-indigo-950/30 border-l-4 border-l-indigo-500" : ""
+                      }`}
+                    >
+                      <td className="px-6 py-4 font-bold text-white">
+                        {row.profile.full_name || "Unnamed"}
+                        {row.profile.id === profile?.id && <span className="text-xs text-indigo-400 font-normal ml-1.5 font-sans">(You)</span>}
+                      </td>
+                      <td className="px-6 py-4 font-semibold text-zinc-300">{row.meals}</td>
+                      <td className="px-6 py-4">{row.mealCostShare.toFixed(2)} TK</td>
+                      <td className="px-6 py-4">{row.otherCostShare.toFixed(2)} TK</td>
+                      <td className="px-6 py-4">{row.directSpending.toFixed(2)} TK</td>
+                      <td className={`px-6 py-4 font-bold ${row.balance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                        {row.balance >= 0 ? "+" : ""}
+                        {row.balance.toFixed(2)} TK
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+                            row.status === "You will get paid"
+                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                              : row.status === "You have to pay"
+                              ? "bg-red-500/10 text-red-400 border border-red-500/20"
+                              : "bg-zinc-800 text-zinc-300"
+                          }`}
+                        >
+                          {row.status}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Helpful Instructions */}
+        <div className="p-5 rounded-xl bg-zinc-900/20 border border-zinc-800 text-xs md:text-sm text-zinc-500 space-y-1.5">
+          <p className="font-semibold text-zinc-400">💡 Calculation Notes:</p>
+          <p>• Meal Rate = Total Meal Cost / Total Meal Count.</p>
+          <p>• Utilities Share = Calculated per transaction. Divided equally only among the members selected for that cost (custom splits), otherwise divided equally among all members.</p>
+          <p>• Your Spending represents all items you purchased directly on behalf of the mess using your own money.</p>
+          <p>• Net Balance = Your Spending - Meal Cost Share - Utilities Share. Positive balance means you will get paid back; negative means you have to pay the manager.</p>
+        </div>
       </div>
     </div>
   );

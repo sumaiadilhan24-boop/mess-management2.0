@@ -21,8 +21,29 @@ function SignupForm() {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
-  // Check if signup is from an invite token
+  // Logged in recovery helper states
+  const [loggedInUser, setLoggedInUser] = useState<any>(null);
+
+  // Check if signup is from an invite token or user is already logged in
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
+      if (session) {
+        supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single()
+          .then((res: any) => {
+            const data = res.data;
+            if (data && data.mess_id) {
+              router.push("/dashboard");
+            } else {
+              setLoggedInUser(session.user);
+            }
+          });
+      }
+    });
+
     if (token) {
       setCheckingToken(true);
       supabase
@@ -50,7 +71,43 @@ function SignupForm() {
           setCheckingToken(false);
         });
     }
-  }, [token]);
+  }, [token, router]);
+
+  // Logged in user creating a mess
+  const handleCreateMessOnly = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!messName.trim() || !loggedInUser) return;
+    setLoading(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    try {
+      // 1. Create a mess on behalf of user
+      const { data: newMess, error: messError } = await supabase
+        .from("messes")
+        .insert({ name: messName.trim() })
+        .select()
+        .single();
+
+      if (messError) throw messError;
+
+      // 2. Update their profile with the new mess ID as super_admin
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ mess_id: newMess.id, role: "super_admin" })
+        .eq("id", loggedInUser.id);
+
+      if (profileError) throw profileError;
+
+      setSuccessMsg("Mess created successfully! Entering dashboard...");
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1500);
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to initialize mess.");
+      setLoading(false);
+    }
+  };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +120,6 @@ function SignupForm() {
         throw new Error("Please specify a Mess Name.");
       }
 
-      // 1. Sign up the user (triggers DB server-side trigger creation for mess and profile)
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -89,6 +145,57 @@ function SignupForm() {
       setLoading(false);
     }
   };
+
+  // If user is already logged in but has no mess: show "Name Your Mess"
+  if (loggedInUser) {
+    return (
+      <div className="bg-zinc-900/60 border border-zinc-800/80 p-8 rounded-2xl backdrop-blur-xl shadow-xl">
+        <div className="mb-4 text-xs text-zinc-400 font-sans">
+          Logged in as: <span className="text-white font-semibold">{loggedInUser.email}</span>
+        </div>
+
+        {errorMsg && (
+          <div className="mb-4 p-3 rounded-lg bg-red-950/50 border border-red-800 text-red-200 text-xs">
+            {errorMsg}
+          </div>
+        )}
+
+        {successMsg && (
+          <div className="mb-4 p-3 rounded-lg bg-emerald-950/50 border border-emerald-800 text-emerald-200 text-xs">
+            {successMsg}
+          </div>
+        )}
+
+        <form className="space-y-5" onSubmit={handleCreateMessOnly}>
+          <div>
+            <label htmlFor="messName" className="block text-sm font-medium text-zinc-300 font-sans">
+              Name Your Mess
+            </label>
+            <p className="text-xs text-zinc-500 mt-1 mb-3 font-sans">
+              Create a new mess profile to initialize your dashboard fund.
+            </p>
+            <input
+              id="messName"
+              type="text"
+              required
+              value={messName}
+              onChange={(e) => setMessName(e.target.value)}
+              className="block w-full rounded-lg bg-zinc-950/80 border border-zinc-800 px-3.5 py-2.5 text-zinc-200 shadow-sm placeholder:text-zinc-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-sans"
+              placeholder="e.g. Dream Mess, Valley View"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex w-full justify-center rounded-lg bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 transition-colors font-sans"
+          >
+            {loading ? "Initializing..." : "Create Mess & Enter Dashboard"}
+          </button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-zinc-900/60 border border-zinc-800/80 p-8 rounded-2xl backdrop-blur-xl shadow-xl">

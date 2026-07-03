@@ -2,6 +2,7 @@
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
 DROP FUNCTION IF EXISTS get_my_mess_id() CASCADE;
+DROP FUNCTION IF EXISTS is_super_admin() CASCADE;
 
 DROP TABLE IF EXISTS costs CASCADE;
 DROP TABLE IF EXISTS deposits CASCADE;
@@ -21,9 +22,9 @@ CREATE TABLE messes (
 -- Enable RLS on messes
 ALTER TABLE messes ENABLE ROW LEVEL SECURITY;
 
--- Create profiles table linked to Supabase Auth users
+-- Create profiles table (ID matches Supabase Auth, but without foreign key checks to allow seeding mock profiles)
 CREATE TABLE profiles (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
     full_name TEXT,
     role TEXT CHECK (role IN ('super_admin', 'member')) NOT NULL DEFAULT 'member',
@@ -38,6 +39,15 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 CREATE OR REPLACE FUNCTION get_my_mess_id()
 RETURNS UUID AS $$
     SELECT mess_id FROM public.profiles WHERE id = auth.uid();
+$$ LANGUAGE sql SECURITY DEFINER;
+
+-- Security definer helper function to check if current user is super_admin without recursion
+CREATE OR REPLACE FUNCTION is_super_admin()
+RETURNS BOOLEAN AS $$
+    SELECT EXISTS (
+        SELECT 1 FROM public.profiles 
+        WHERE id = auth.uid() AND role = 'super_admin'
+    );
 $$ LANGUAGE sql SECURITY DEFINER;
 
 -- Create table for Invites
@@ -104,7 +114,10 @@ ALTER TABLE costs ENABLE ROW LEVEL SECURITY;
 -- Messes Policies
 CREATE POLICY "Allow read mess details for members" ON messes
     FOR SELECT TO authenticated USING (
-        id = get_my_mess_id()
+        id = get_my_mess_id() OR EXISTS (
+            SELECT 1 FROM public.profiles 
+            WHERE profiles.id = auth.uid() AND (profiles.mess_id IS NULL OR profiles.mess_id = messes.id)
+        )
     );
 
 CREATE POLICY "Allow authenticated users to create a mess" ON messes
@@ -112,9 +125,7 @@ CREATE POLICY "Allow authenticated users to create a mess" ON messes
 
 CREATE POLICY "Allow update mess details for super admin" ON messes
     FOR UPDATE TO authenticated USING (
-        id = get_my_mess_id() AND EXISTS (
-            SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'super_admin'
-        )
+        id = get_my_mess_id() AND is_super_admin()
     );
 
 -- Profiles Policies
@@ -126,6 +137,14 @@ CREATE POLICY "Allow read profiles in same mess" ON profiles
 CREATE POLICY "Allow profiles self manage" ON profiles
     FOR ALL TO authenticated USING (id = auth.uid());
 
+-- Allow Super Admin to fully manage profiles inside their own mess (includes Insert, Update and Delete)
+CREATE POLICY "Allow super admin to manage profiles in same mess" ON profiles
+    FOR ALL TO authenticated USING (
+        mess_id = get_my_mess_id() AND is_super_admin()
+    ) WITH CHECK (
+        mess_id = get_my_mess_id() AND is_super_admin()
+    );
+
 -- Invites Policies
 CREATE POLICY "Allow read invites for mess" ON invites
     FOR SELECT TO authenticated USING (
@@ -134,25 +153,23 @@ CREATE POLICY "Allow read invites for mess" ON invites
 
 CREATE POLICY "Allow create/delete invites for super admin" ON invites
     FOR ALL TO authenticated USING (
-        mess_id = get_my_mess_id() AND EXISTS (
-            SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'super_admin'
-        )
+        mess_id = get_my_mess_id() AND is_super_admin()
     );
 
 -- Meals Policies
 CREATE POLICY "Allow meal read in same mess" ON meals
     FOR SELECT TO authenticated USING (
         EXISTS (
-            SELECT 1 FROM profiles 
-            WHERE profiles.id = meals.profile_id AND profiles.mess_id = get_my_mess_id()
+            SELECT 1 FROM public.profiles 
+            WHERE public.profiles.id = meals.profile_id AND public.profiles.mess_id = get_my_mess_id()
         )
     );
 
-CREATE POLICY "Allow meal entry for authenticated users in same mess" ON meals
+CREATE POLICY "Allow meal manage in same mess" ON meals
     FOR ALL TO authenticated USING (
         EXISTS (
-            SELECT 1 FROM profiles 
-            WHERE profiles.id = meals.profile_id AND profiles.mess_id = get_my_mess_id()
+            SELECT 1 FROM public.profiles 
+            WHERE public.profiles.id = meals.profile_id AND public.profiles.mess_id = get_my_mess_id()
         )
     );
 
@@ -160,16 +177,16 @@ CREATE POLICY "Allow meal entry for authenticated users in same mess" ON meals
 CREATE POLICY "Allow deposit read in same mess" ON deposits
     FOR SELECT TO authenticated USING (
         EXISTS (
-            SELECT 1 FROM profiles 
-            WHERE profiles.id = deposits.profile_id AND profiles.mess_id = get_my_mess_id()
+            SELECT 1 FROM public.profiles 
+            WHERE public.profiles.id = deposits.profile_id AND public.profiles.mess_id = get_my_mess_id()
         )
     );
 
-CREATE POLICY "Allow deposit entry for authenticated users in same mess" ON deposits
+CREATE POLICY "Allow deposit manage in same mess" ON deposits
     FOR ALL TO authenticated USING (
         EXISTS (
-            SELECT 1 FROM profiles 
-            WHERE profiles.id = deposits.profile_id AND profiles.mess_id = get_my_mess_id()
+            SELECT 1 FROM public.profiles 
+            WHERE public.profiles.id = deposits.profile_id AND public.profiles.mess_id = get_my_mess_id()
         )
     );
 
@@ -177,16 +194,16 @@ CREATE POLICY "Allow deposit entry for authenticated users in same mess" ON depo
 CREATE POLICY "Allow costs read in same mess" ON costs
     FOR SELECT TO authenticated USING (
         EXISTS (
-            SELECT 1 FROM profiles 
-            WHERE profiles.id = auth.uid() AND profiles.mess_id = get_my_mess_id()
+            SELECT 1 FROM public.profiles 
+            WHERE public.profiles.id = auth.uid() AND public.profiles.mess_id = get_my_mess_id()
         )
     );
 
-CREATE POLICY "Allow costs entry for authenticated users in same mess" ON costs
+CREATE POLICY "Allow costs manage in same mess" ON costs
     FOR ALL TO authenticated USING (
         EXISTS (
-            SELECT 1 FROM profiles 
-            WHERE profiles.id = auth.uid() AND profiles.mess_id = get_my_mess_id()
+            SELECT 1 FROM public.profiles 
+            WHERE public.profiles.id = auth.uid() AND public.profiles.mess_id = get_my_mess_id()
         )
     );
 
