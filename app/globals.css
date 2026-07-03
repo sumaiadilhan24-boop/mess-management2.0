@@ -24,3 +24,116 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Native Light Mode Utility Class Overrides */
+html.light-mode {
+  color-scheme: light;
+}
+
+html.light-mode .bg-zinc-950 {
+  background-color: #f4f4f5 !important; /* zinc-100 background */
+}
+
+html.light-mode .bg-zinc-900,
+html.light-mode .bg-zinc-900\/50,
+html.light-mode .bg-zinc-900\/40,
+html.light-mode .bg-zinc-900\/60 {
+  background-color: #ffffff !important; /* white cards */
+}
+
+html.light-mode .bg-zinc-950\/40,
+html.light-mode .bg-zinc-950\/20,
+html.light-mode .bg-zinc-950\/30,
+html.light-mode .bg-zinc-950\/80 {
+  background-color: #fafafa !important; /* light details / inputs background */
+}
+
+html.light-mode .text-zinc-50,
+html.light-mode .text-white:not(button, button *, a, a *, [class*="bg-indigo-"], [class*="bg-emerald-"], [class*="bg-red-"], [class*="bg-rose-"], .inline-flex, .inline-flex *) {
+  color: #09090b !important; /* zinc-950 text */
+}
+
+html.light-mode .text-zinc-200,
+html.light-mode .text-zinc-300 {
+  color: #27272a !important; /* zinc-800 text */
+}
+
+html.light-mode .text-zinc-400 {
+  color: #71717a !important; /* zinc-500 muted text */
+}
+
+html.light-mode .text-zinc-500 {
+  color: #8c8c9a !important; /* zinc-400 secondary text */
+}
+
+html.light-mode .border-zinc-800,
+html.light-mode .border-zinc-800\/80,
+html.light-mode .border-zinc-900 {
+  border-color: #e4e4e7 !important; /* zinc-200 borders */
+}
+
+html.light-mode input,
+html.light-mode select {
+  background-color: #ffffff !important;
+  color: #09090b !important;
+  border-color: #d4d4d8 !important;
+}
+
+html.light-mode select option {
+  background-color: #ffffff !important;
+  color: #09090b !important;
+}
+
+/* Light Mode Calendar Cells Overrides */
+html.light-mode .bg-emerald-950\/40 {
+  background-color: #d1fae5 !important; /* Soft light green */
+  color: #065f46 !important; /* Dark green text */
+  border-color: #a7f3d0 !important;
+}
+html.light-mode .bg-emerald-950\/40:hover {
+  background-color: #a7f3d0 !important;
+}
+
+html.light-mode .bg-rose-950\/40 {
+  background-color: #fee2e2 !important; /* Soft light red */
+  color: #991b1b !important; /* Dark red text */
+  border-color: #fca5a5 !important;
+}
+html.light-mode .bg-rose-950\/40:hover {
+  background-color: #fca5a5 !important;
+}
+
+html.light-mode .bg-zinc-900\/20 {
+  background-color: #f4f4f5 !important; /* Light gray */
+  color: #a1a1aa !important;
+  border-color: #e4e4e7 !important;
+}
+
+/* Light Mode Dashboard Table Highlights & Headers */
+html.light-mode .bg-zinc-950\/50,
+html.light-mode .bg-zinc-950\/80,
+html.light-mode .bg-zinc-905\/50 {
+  background-color: #fafafa !important; /* Soft white/zinc-50 table header */
+  color: #18181b !important;
+}
+
+html.light-mode .bg-zinc-900\/55 {
+  background-color: #f4f4f5 !important; /* Slightly darker strip for table section headers */
+  color: #18181b !important;
+}
+
+html.light-mode .bg-indigo-950\/30 {
+  background-color: #e0e7ff !important; /* Soft indigo selected row highlight */
+}
+
+html.light-mode .hover\:bg-zinc-900\/20:hover,
+html.light-mode .hover\:bg-zinc-900\/10:hover,
+html.light-mode .hover\:bg-zinc-800\/50:hover,
+html.light-mode tr.hover\:bg-zinc-900\/10:hover,
+html.light-mode tr:hover {
+  background-color: #f4f4f5 !important; /* Subtle gray row hover background */
+}
+
+html.light-mode .hover\:text-zinc-100:hover {
+  color: #18181b !important; /* Keep sidebar hover labels readable in light mode */
+}

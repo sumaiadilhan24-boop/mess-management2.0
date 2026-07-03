@@ -11,6 +11,23 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<any>(null);
   const [mess, setMess] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as "dark" | "light";
+    if (savedTheme) {
+      setTheme(savedTheme);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (theme === "light") {
+      document.documentElement.classList.add("light-mode");
+    } else {
+      document.documentElement.classList.remove("light-mode");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     const checkAuthAndFetchProfile = async () => {
@@ -158,6 +175,17 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
+
+        {/* Theme Toggle Widget */}
+        <div className="p-4 border-t border-zinc-800/80 bg-zinc-950/20 flex items-center justify-between shrink-0">
+          <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider font-sans">Theme Mode</span>
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-950 hover:bg-zinc-800 text-xs font-bold text-zinc-300 transition-colors border border-zinc-800/60 font-sans cursor-pointer"
+          >
+            {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
+          </button>
+        </div>
 
         {/* User profile footer */}
         <div className="p-4 border-t border-zinc-800 bg-zinc-950/40 flex items-center justify-between shrink-0">
