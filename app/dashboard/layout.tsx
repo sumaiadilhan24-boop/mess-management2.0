@@ -140,21 +140,21 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   return (
     <div className="fixed inset-0 flex flex-col md:flex-row bg-zinc-950 text-zinc-50 overflow-hidden">
       {/* Mobile Top Header */}
-      <header className="flex md:hidden items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900/50 backdrop-blur shrink-0 z-20">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-lg text-white">
+      <header className="flex md:hidden items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900/60 backdrop-blur shrink-0 z-20">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="h-8 w-8 shrink-0 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-lg text-white">
             M
           </div>
-          <div>
-            <h2 className="font-semibold text-sm leading-tight text-white">{mess?.name || "My Mess"}</h2>
-            <span className="text-[10px] text-indigo-400 font-medium tracking-wide uppercase block">
+          <div className="min-w-0">
+            <h2 className="font-semibold text-sm leading-tight text-white truncate">{mess?.name || "My Mess"}</h2>
+            <span className="text-[10px] text-indigo-400 font-medium tracking-wide uppercase block truncate">
               {profile.role === "super_admin" ? "Super Admin" : "Member"}
             </span>
           </div>
         </div>
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50 transition-colors"
+          className="p-2 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50 transition-colors shrink-0"
           aria-label="Toggle Sidebar"
         >
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -178,14 +178,14 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         }`}
       >
         {/* Header Branding */}
-        <div className="p-6 border-b border-zinc-800 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-lg text-white">
+        <div className="p-5 sm:p-6 border-b border-zinc-800 flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="h-9 w-9 shrink-0 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-lg text-white">
               M
             </div>
-            <div>
-              <h2 className="font-semibold text-sm leading-tight text-white">{mess?.name || "My Mess"}</h2>
-              <span className="text-[10px] text-indigo-400 font-medium tracking-wide uppercase">
+            <div className="min-w-0">
+              <h2 className="font-semibold text-sm leading-tight text-white truncate">{mess?.name || "My Mess"}</h2>
+              <span className="text-[10px] text-indigo-400 font-medium tracking-wide uppercase truncate block">
                 {profile.role === "super_admin" ? "Super Admin" : "Member"}
               </span>
             </div>
@@ -193,7 +193,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
           {/* Mobile Close Button */}
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="p-1 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 md:hidden"
+            className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 md:hidden shrink-0"
             aria-label="Close Sidebar"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -211,7 +211,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center gap-3 px-3 py-3 sm:py-2.5 rounded-lg text-sm font-medium transition-all ${
                   isActive
                     ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/10"
                     : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50"
@@ -223,6 +223,39 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
+
+        {/* Theme Toggle Widget */}
+        <div className="px-4 py-3 border-t border-zinc-800/80 bg-zinc-950/20 shrink-0">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider font-sans">Theme</span>
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-zinc-950/60 border border-zinc-800/80">
+              <button
+                onClick={() => setTheme("light")}
+                aria-label="Switch to light theme"
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold font-sans transition-colors ${
+                  theme === "light"
+                    ? "bg-white text-zinc-900 shadow-sm"
+                    : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                <span>☀️</span>
+                <span>Light</span>
+              </button>
+              <button
+                onClick={() => setTheme("dark")}
+                aria-label="Switch to dark theme"
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold font-sans transition-colors ${
+                  theme === "dark"
+                    ? "bg-zinc-800 text-zinc-50 shadow-sm"
+                    : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                <span>🌙</span>
+                <span>Dark</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* User profile footer */}
         <div className="p-4 border-t border-zinc-800 bg-zinc-950/40 flex items-center justify-between shrink-0">

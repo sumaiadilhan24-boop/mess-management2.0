@@ -297,19 +297,19 @@ export default function SettingsPage() {
   return (
     <div className="flex-1 bg-zinc-950 text-zinc-50 font-sans text-sm md:text-base flex flex-col h-full overflow-hidden">
       {/* Sticky Upper Action Bar */}
-      <div className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-md px-6 py-6 md:px-8 border-b border-zinc-900 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-md px-4 sm:px-6 md:px-8 py-4 sm:py-6 border-b border-zinc-900 shrink-0">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Mess Settings</h1>
-          <p className="text-sm text-zinc-400">Configure mess profiles, access rules and database tools</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white">Mess Settings</h1>
+          <p className="text-xs sm:text-sm text-zinc-400">Configure mess profiles, access rules and database tools</p>
         </div>
       </div>
 
       {/* Scrollable Page Content */}
-      <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
           {/* Left Area: Main Configuration Forms */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/40 backdrop-blur space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+            <div className="p-4 sm:p-6 rounded-2xl border border-zinc-800 bg-zinc-900/40 backdrop-blur space-y-5 sm:space-y-6">
               <h2 className="text-base font-semibold text-zinc-200 border-b border-zinc-800 pb-3 font-sans">General Config</h2>
               
               <form onSubmit={handleSaveSettings} className="space-y-5">
@@ -390,7 +390,7 @@ export default function SettingsPage() {
 
           {/* Right Area: Database Tools (Only for Super Admins) */}
           {isSuperAdmin && (
-            <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-6 backdrop-blur">
+            <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-4 sm:p-6 space-y-5 sm:space-y-6 backdrop-blur">
               <div>
                 <h2 className="text-base font-semibold text-zinc-200 border-b border-zinc-800 pb-3 font-sans">Database Tools</h2>
                 <p className="text-xs text-zinc-500 mt-2 font-sans">Utilities to control data and preview states.</p>

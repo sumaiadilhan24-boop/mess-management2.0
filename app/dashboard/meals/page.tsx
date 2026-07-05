@@ -180,18 +180,18 @@ export default function MealsPage() {
   return (
     <div className="flex-1 bg-zinc-950 text-zinc-50 font-sans text-sm md:text-base flex flex-col h-full overflow-hidden">
       {/* Sticky Upper Action Bar */}
-      <div className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-md px-6 py-6 md:px-8 border-b border-zinc-900 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-md px-4 sm:px-6 md:px-8 py-4 sm:py-6 border-b border-zinc-900 shrink-0">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Meal Log</h1>
-          <p className="text-xs md:text-sm text-zinc-400">Record daily meal counts and view monthly registers</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white">Meal Log</h1>
+          <p className="text-xs sm:text-sm text-zinc-400">Record daily meal counts and view monthly registers</p>
         </div>
       </div>
 
       {/* Scrollable Page Content */}
-      <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
           {/* Left Column: Quick Daily Logger (Conditional on Permissions) */}
-          <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-6 backdrop-blur">
+          <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-4 sm:p-6 space-y-5 sm:space-y-6 backdrop-blur">
             {isAllowedToLog ? (
               <>
                 <div>
@@ -216,12 +216,12 @@ export default function MealsPage() {
 
                   <div className="border-t border-zinc-800/80 pt-4 space-y-3.5">
                     {membersToLog.map((member) => (
-                      <div key={member.id} className="flex items-center justify-between">
-                        <span className="text-sm text-zinc-200 font-bold font-sans">{member.full_name || "Unnamed"}</span>
-                        <div className="flex items-center gap-1.5">
+                      <div key={member.id} className="flex items-center justify-between gap-2">
+                        <span className="text-sm text-zinc-200 font-bold font-sans truncate min-w-0">{member.full_name || "Unnamed"}</span>
+                        <div className="flex items-center gap-1.5 shrink-0">
                           <button
                             onClick={() => handleCountChange(member.id, Math.max(0, (dailyCounts[member.id] || 0) - 0.5))}
-                            className="w-9 h-9 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-950/60 flex items-center justify-center text-zinc-300 hover:text-white transition-colors text-lg font-bold font-sans"
+                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-950/60 flex items-center justify-center text-zinc-300 hover:text-white transition-colors text-lg font-bold font-sans"
                           >
                             -
                           </button>
@@ -231,11 +231,11 @@ export default function MealsPage() {
                             min="0"
                             value={dailyCounts[member.id] || 0}
                             onChange={(e) => handleCountChange(member.id, Number(e.target.value))}
-                            className="w-14 text-center bg-zinc-950/80 border border-zinc-800 py-1.5 px-1 rounded-md text-sm font-bold text-white focus:outline-none focus:border-indigo-500 font-sans"
+                            className="w-12 sm:w-14 text-center bg-zinc-950/80 border border-zinc-800 py-1 sm:py-1.5 px-1 rounded-md text-sm font-bold text-white focus:outline-none focus:border-indigo-500 font-sans"
                           />
                           <button
                             onClick={() => handleCountChange(member.id, (dailyCounts[member.id] || 0) + 0.5)}
-                            className="w-9 h-9 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-950/60 flex items-center justify-center text-zinc-300 hover:text-white transition-colors text-lg font-bold font-sans"
+                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-950/60 flex items-center justify-center text-zinc-300 hover:text-white transition-colors text-lg font-bold font-sans"
                           >
                             +
                           </button>
@@ -273,8 +273,8 @@ export default function MealsPage() {
           </div>
 
           {/* Right Column: Monthly Grid */}
-          <div className="lg:col-span-2 bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur flex flex-col h-[560px]">
-            <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900/55 flex justify-between items-center shrink-0">
+          <div className="lg:col-span-2 bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur flex flex-col h-[520px] sm:h-[560px]">
+            <div className="px-4 sm:px-6 py-4 border-b border-zinc-800 bg-zinc-900/55 flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-center shrink-0">
               <div>
                 <h2 className="font-semibold text-sm md:text-base text-zinc-200 font-sans">Monthly Ledger Overview</h2>
                 <p className="text-xs text-zinc-500 font-sans">Overview of active meals per day</p>
@@ -285,7 +285,7 @@ export default function MealsPage() {
                 <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                  className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-300 py-1.5 px-3 rounded-lg cursor-pointer pr-8 appearance-none"
+                  className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-300 py-1.5 px-3 rounded-lg cursor-pointer pr-7 appearance-none"
                 >
                   {months.map((m) => (
                     <option key={m.value} value={m.value}>
@@ -296,7 +296,7 @@ export default function MealsPage() {
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(Number(e.target.value))}
-                  className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-300 py-1.5 px-3 rounded-lg cursor-pointer pr-8 appearance-none"
+                  className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-300 py-1.5 px-3 rounded-lg cursor-pointer pr-7 appearance-none"
                 >
                   {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((y) => (
                     <option key={y} value={y}>
@@ -308,16 +308,16 @@ export default function MealsPage() {
             </div>
 
             <div className="flex-1 overflow-auto">
-              <table className="w-full text-left text-sm text-zinc-300 border-collapse">
+              <table className="w-full text-left text-sm text-zinc-300 border-collapse min-w-[640px]">
                 <thead className="bg-zinc-950/80 text-xs text-zinc-400 border-b border-zinc-800 uppercase tracking-wider sticky top-0 z-10">
                   <tr>
-                    <th className="px-4 py-3 bg-zinc-950">Day</th>
+                    <th className="px-3 sm:px-4 py-3 bg-zinc-950">Day</th>
                     {members.map((m) => (
-                      <th key={m.id} className="px-4 py-3 min-w-[90px]">
+                      <th key={m.id} className="px-3 sm:px-4 py-3 min-w-[80px] sm:min-w-[90px]">
                         {m.full_name || "Unnamed"}
                       </th>
                     ))}
-                    <th className="px-4 py-3 font-bold bg-zinc-950">Daily Total</th>
+                    <th className="px-3 sm:px-4 py-3 font-bold bg-zinc-950 whitespace-nowrap">Daily Total</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-800/40">
@@ -326,13 +326,13 @@ export default function MealsPage() {
                     let dailySum = 0;
                     return (
                       <tr key={day} className="hover:bg-zinc-900/10 transition-colors">
-                        <td className="px-4 py-2.5 font-bold text-zinc-400 bg-zinc-950/30">{day}</td>
+                        <td className="px-3 sm:px-4 py-2.5 font-bold text-zinc-400 bg-zinc-950/30">{day}</td>
                         {members.map((m) => {
                           const cellMeal = monthlyMeals.find((meal) => meal.profile_id === m.id && meal.date === dateStr);
                           const countVal = cellMeal ? Number(cellMeal.count) : 0;
                           dailySum += countVal;
                           return (
-                            <td key={m.id} className="px-4 py-2.5 font-semibold">
+                            <td key={m.id} className="px-3 sm:px-4 py-2.5 font-semibold text-center">
                               {countVal > 0 ? (
                                 <span className="text-zinc-200">{countVal}</span>
                               ) : (
@@ -341,7 +341,7 @@ export default function MealsPage() {
                             </td>
                           );
                         })}
-                        <td className="px-4 py-2.5 font-bold text-indigo-400 bg-zinc-950/30">
+                        <td className="px-3 sm:px-4 py-2.5 font-bold text-indigo-400 bg-zinc-950/30 text-center">
                           {dailySum > 0 ? dailySum : ""}
                         </td>
                       </tr>
@@ -350,18 +350,18 @@ export default function MealsPage() {
                 </tbody>
                 <tfoot className="bg-zinc-950/80 font-bold border-t border-zinc-800 uppercase text-xs tracking-wider sticky bottom-0 z-10">
                   <tr>
-                    <td className="px-4 py-3">Total</td>
+                    <td className="px-3 sm:px-4 py-3">Total</td>
                     {members.map((m) => {
                       const memberTotal = monthlyMeals
                         .filter((meal) => meal.profile_id === m.id)
                         .reduce((sum, meal) => sum + Number(meal.count || 0), 0);
                       return (
-                        <td key={m.id} className="px-4 py-3 text-white text-base">
+                        <td key={m.id} className="px-3 sm:px-4 py-3 text-white text-base text-center">
                           {memberTotal}
                         </td>
                       );
                     })}
-                    <td className="px-4 py-3 text-indigo-400 text-base">
+                    <td className="px-3 sm:px-4 py-3 text-indigo-400 text-base text-center">
                       {monthlyMeals.reduce((sum, meal) => sum + Number(meal.count || 0), 0)}
                     </td>
                   </tr>

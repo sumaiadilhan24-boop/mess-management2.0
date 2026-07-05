@@ -244,27 +244,29 @@ export default function DashboardPage() {
   return (
     <div className="flex-1 bg-zinc-950 text-zinc-50 relative text-sm md:text-base flex flex-col h-full overflow-hidden">
       {/* Sticky Upper Action Bar */}
-      <div className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-md px-6 py-6 md:px-8 border-b border-zinc-900 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
-            {viewContext === "overall" ? "Overall Mess Summary" : `${currentViewMember?.full_name}'s Personal Status`}
-          </h1>
-          <p className="text-xs md:text-sm text-zinc-400">
-            {viewContext === "overall" 
-              ? "Viewing summary and balances for the entire mess fund" 
-              : `Viewing individual ledger statements for ${currentViewMember?.full_name}`}
-          </p>
+      <div className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-md px-4 py-4 sm:px-6 md:px-8 sm:py-6 border-b border-zinc-900 shrink-0 flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white">
+              {viewContext === "overall" ? "Overall Mess Summary" : `${currentViewMember?.full_name}'s Personal Status`}
+            </h1>
+            <p className="text-xs sm:text-sm text-zinc-400">
+              {viewContext === "overall"
+                ? "Viewing summary and balances for the entire mess fund"
+                : `Viewing individual ledger statements for ${currentViewMember?.full_name}`}
+            </p>
+          </div>
         </div>
 
         {/* View Scope & Month / Year Selector */}
-        <div className="flex flex-wrap gap-2 items-center bg-zinc-900/60 p-1.5 rounded-xl border border-zinc-800">
+        <div className="flex flex-wrap gap-2 items-center bg-zinc-900/60 p-1.5 rounded-xl border border-zinc-800 w-full sm:w-auto sm:self-end">
           {/* View Selector */}
-          <div className="flex items-center gap-1.5 border-r border-zinc-800 pr-2">
-            <span className="text-xs text-zinc-500 font-bold uppercase pl-1.5">View Scope:</span>
+          <div className="flex items-center gap-1.5 border-r border-zinc-800 pr-2 min-w-0">
+            <span className="hidden sm:inline text-[10px] text-zinc-500 font-bold uppercase pl-1.5">View:</span>
             <select
               value={viewContext}
               onChange={(e) => setViewContext(e.target.value)}
-              className="bg-transparent text-xs border-0 focus:ring-0 text-white py-1 px-3.5 rounded-lg hover:bg-zinc-850 cursor-pointer font-bold pr-8 appearance-none"
+              className="bg-transparent text-xs sm:text-sm border-0 focus:ring-0 text-white py-1 px-2 sm:px-3.5 rounded-lg hover:bg-zinc-800 cursor-pointer font-bold pr-7 sm:pr-8 appearance-none max-w-[160px] sm:max-w-none"
             >
               <option value="overall" className="bg-zinc-900 text-white font-bold">Overall Mess Status</option>
               {selectOptions.map((m) => (
@@ -279,7 +281,7 @@ export default function DashboardPage() {
           <select
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(Number(e.target.value))}
-            className="bg-transparent text-sm border-0 focus:ring-0 text-zinc-200 py-1.5 px-3 rounded-lg hover:bg-zinc-800 cursor-pointer pr-8 appearance-none"
+            className="bg-transparent text-xs sm:text-sm border-0 focus:ring-0 text-zinc-200 py-1.5 px-2 sm:px-3 rounded-lg hover:bg-zinc-800 cursor-pointer pr-7 sm:pr-8 appearance-none"
           >
             {months.map((m) => (
               <option key={m.value} value={m.value} className="bg-zinc-900 text-zinc-200">
@@ -291,7 +293,7 @@ export default function DashboardPage() {
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
-            className="bg-transparent text-sm border-0 focus:ring-0 text-zinc-200 py-1.5 px-3 rounded-lg hover:bg-zinc-800 cursor-pointer pr-8 appearance-none"
+            className="bg-transparent text-xs sm:text-sm border-0 focus:ring-0 text-zinc-200 py-1.5 px-2 sm:px-3 rounded-lg hover:bg-zinc-800 cursor-pointer pr-7 sm:pr-8 appearance-none"
           >
             {years.map((y) => (
               <option key={y} value={y} className="bg-zinc-900 text-zinc-200">
@@ -303,43 +305,43 @@ export default function DashboardPage() {
       </div>
 
       {/* Scrollable Page Content */}
-      <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl backdrop-blur flex flex-col justify-between">
-            <span className="text-xs md:text-sm text-zinc-400 font-medium">{cardTitleDeposit}</span>
-            <h3 className="text-xl md:text-3xl font-bold text-white mt-2">
-              {displayDeposit.toLocaleString()} <span className="text-xs md:text-sm font-normal text-zinc-500">TK</span>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-zinc-900/50 border border-zinc-800 p-4 sm:p-5 rounded-2xl backdrop-blur flex flex-col justify-between gap-2">
+            <span className="text-[11px] sm:text-xs md:text-sm text-zinc-400 font-medium leading-snug">{cardTitleDeposit}</span>
+            <h3 className="text-lg sm:text-xl md:text-3xl font-bold text-white break-words">
+              {displayDeposit.toLocaleString()} <span className="text-[10px] sm:text-xs md:text-sm font-normal text-zinc-500">TK</span>
             </h3>
           </div>
 
-          <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl backdrop-blur flex flex-col justify-between">
-            <span className="text-xs md:text-sm text-zinc-400 font-medium">{cardTitleMealCost}</span>
-            <h3 className="text-xl md:text-3xl font-bold text-white mt-2">
-              {displayMealCost.toLocaleString()} <span className="text-xs md:text-sm font-normal text-zinc-500">TK</span>
+          <div className="bg-zinc-900/50 border border-zinc-800 p-4 sm:p-5 rounded-2xl backdrop-blur flex flex-col justify-between gap-2">
+            <span className="text-[11px] sm:text-xs md:text-sm text-zinc-400 font-medium leading-snug">{cardTitleMealCost}</span>
+            <h3 className="text-lg sm:text-xl md:text-3xl font-bold text-white break-words">
+              {displayMealCost.toLocaleString()} <span className="text-[10px] sm:text-xs md:text-sm font-normal text-zinc-500">TK</span>
             </h3>
           </div>
 
-          <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl backdrop-blur flex flex-col justify-between">
-            <span className="text-xs md:text-sm text-zinc-400 font-medium">{cardTitleOtherCost}</span>
-            <h3 className="text-xl md:text-3xl font-bold text-white mt-2">
-              {displayOtherCost.toLocaleString()} <span className="text-xs md:text-sm font-normal text-zinc-500">TK</span>
+          <div className="bg-zinc-900/50 border border-zinc-800 p-4 sm:p-5 rounded-2xl backdrop-blur flex flex-col justify-between gap-2">
+            <span className="text-[11px] sm:text-xs md:text-sm text-zinc-400 font-medium leading-snug">{cardTitleOtherCost}</span>
+            <h3 className="text-lg sm:text-xl md:text-3xl font-bold text-white break-words">
+              {displayOtherCost.toLocaleString()} <span className="text-[10px] sm:text-xs md:text-sm font-normal text-zinc-500">TK</span>
             </h3>
           </div>
 
-          <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl backdrop-blur flex flex-col justify-between">
-            <span className="text-xs md:text-sm text-zinc-400 font-medium">{cardTitleBalance}</span>
-            <h3 className={`text-xl md:text-3xl font-bold mt-2 ${isBalancePositive ? "text-emerald-400" : "text-red-400"}`}>
-              {displayBalance.toLocaleString()} <span className="text-xs md:text-sm font-normal text-zinc-500">TK</span>
+          <div className="bg-zinc-900/50 border border-zinc-800 p-4 sm:p-5 rounded-2xl backdrop-blur flex flex-col justify-between gap-2">
+            <span className="text-[11px] sm:text-xs md:text-sm text-zinc-400 font-medium leading-snug">{cardTitleBalance}</span>
+            <h3 className={`text-lg sm:text-xl md:text-3xl font-bold break-words ${isBalancePositive ? "text-emerald-400" : "text-red-400"}`}>
+              {displayBalance.toLocaleString()} <span className="text-[10px] sm:text-xs md:text-sm font-normal text-zinc-500">TK</span>
             </h3>
           </div>
         </div>
 
         {/* Calculations details card (Full Width) */}
         <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur">
-          <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900/55 flex flex-col sm:flex-row gap-2 justify-between sm:items-center">
+          <div className="px-4 sm:px-6 py-4 border-b border-zinc-800 bg-zinc-900/55 flex flex-col sm:flex-row gap-2 sm:gap-3 justify-between sm:items-center">
             <h2 className="font-semibold text-sm md:text-base text-zinc-200">Calculation Constants</h2>
-            <div className="flex gap-4 text-xs md:text-sm text-zinc-400 font-sans">
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs md:text-sm text-zinc-400 font-sans">
               <div>
                 Total Meals: <span className="text-white font-medium">{totalMeals}</span>
               </div>
@@ -350,45 +352,45 @@ export default function DashboardPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-zinc-300">
+            <table className="w-full text-left text-sm text-zinc-300 min-w-[640px]">
               <thead className="bg-zinc-950/50 text-xs text-zinc-400 border-b border-zinc-800 uppercase tracking-wider">
                 <tr>
-                  <th className="px-6 py-3.5">Name</th>
-                  <th className="px-6 py-3.5">Meal Count</th>
-                  <th className="px-6 py-3.5 font-sans">{isPayAsYouGo ? "Contribution" : "Deposited"}</th>
-                  <th className="px-6 py-3.5">Meal Cost Share</th>
-                  <th className="px-6 py-3.5">Utilities Share</th>
-                  <th className="px-6 py-3.5">Your Spending</th>
-                  <th className="px-6 py-3.5">Net Balance</th>
-                  <th className="px-6 py-3.5">Status</th>
+                  <th className="px-4 sm:px-6 py-3.5">Name</th>
+                  <th className="px-4 sm:px-6 py-3.5">Meal Count</th>
+                  <th className="px-4 sm:px-6 py-3.5 font-sans">{isPayAsYouGo ? "Contribution" : "Deposited"}</th>
+                  <th className="px-4 sm:px-6 py-3.5">Meal Cost Share</th>
+                  <th className="px-4 sm:px-6 py-3.5">Utilities Share</th>
+                  <th className="px-4 sm:px-6 py-3.5">Your Spending</th>
+                  <th className="px-4 sm:px-6 py-3.5">Net Balance</th>
+                  <th className="px-4 sm:px-6 py-3.5">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800/60">
                 {summaryRows.map((row) => {
                   const isSelectedRow = row.profile.id === viewContext;
                   return (
-                    <tr 
-                      key={row.profile.id} 
+                    <tr
+                      key={row.profile.id}
                       className={`hover:bg-zinc-900/20 transition-colors text-sm md:text-base ${
                         isSelectedRow ? "bg-indigo-950/30 border-l-4 border-l-indigo-500" : ""
                       }`}
                     >
-                      <td className="px-6 py-4 font-bold text-white">
+                      <td className="px-4 sm:px-6 py-4 font-bold text-white">
                         {row.profile.full_name || "Unnamed"}
                         {row.profile.id === profile?.id && <span className="text-xs text-indigo-400 font-normal ml-1.5 font-sans">(You)</span>}
                       </td>
-                      <td className="px-6 py-4 font-semibold text-zinc-300">{row.meals}</td>
-                      <td className="px-6 py-4 font-semibold text-indigo-400">{row.deposited.toFixed(2)} TK</td>
-                      <td className="px-6 py-4">{row.mealCostShare.toFixed(2)} TK</td>
-                      <td className="px-6 py-4">{row.otherCostShare.toFixed(2)} TK</td>
-                      <td className="px-6 py-4">{row.directSpending.toFixed(2)} TK</td>
-                      <td className={`px-6 py-4 font-bold ${row.balance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                      <td className="px-4 sm:px-6 py-4 font-semibold text-zinc-300">{row.meals}</td>
+                      <td className="px-4 sm:px-6 py-4 font-semibold text-indigo-400 whitespace-nowrap">{row.deposited.toFixed(2)} TK</td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{row.mealCostShare.toFixed(2)} TK</td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{row.otherCostShare.toFixed(2)} TK</td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{row.directSpending.toFixed(2)} TK</td>
+                      <td className={`px-4 sm:px-6 py-4 font-bold whitespace-nowrap ${row.balance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                         {row.balance >= 0 ? "+" : ""}
                         {row.balance.toFixed(2)} TK
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4">
                         <span
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
                             row.status === "You will get paid"
                               ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                               : row.status === "You have to pay"
@@ -408,9 +410,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Bottom Panel Grid (50% Calendar Tracker, 50% Explanation Notes) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-stretch">
           {/* Meal logging calendar tracker */}
-          <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-5 space-y-4 backdrop-blur flex flex-col justify-between">
+          <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-4 sm:p-5 space-y-4 backdrop-blur flex flex-col justify-between">
             <div className="space-y-4">
               <div>
                 <h2 className="text-base font-semibold text-zinc-200 font-sans">Meal Logs Tracker</h2>
@@ -418,7 +420,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Calendar Grid Header Days */}
-              <div className="grid grid-cols-7 gap-1.5 text-center text-[10px] font-bold uppercase text-zinc-500 font-sans tracking-wide">
+              <div className="grid grid-cols-7 gap-1 sm:gap-1.5 text-center text-[9px] sm:text-[10px] font-bold uppercase text-zinc-500 font-sans tracking-wide">
                 <span>Su</span>
                 <span>Mo</span>
                 <span>Tu</span>
@@ -429,7 +431,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Days Grid */}
-              <div className="grid grid-cols-7 gap-1.5">
+              <div className="grid grid-cols-7 gap-1 sm:gap-1.5">
                 {/* Spacers for the start of the week */}
                 {Array.from({ length: firstDayIndex }).map((_, i) => (
                   <div key={`spacer-${i}`} className="aspect-square bg-transparent" />
@@ -438,7 +440,7 @@ export default function DashboardPage() {
                 {/* Day cells */}
                 {calendarCells.map((day) => {
                   const { hasHistory, isFuture, dayMealsSum } = getCalendarDayMeta(day);
-                  
+
                   // Color codes
                   let cellClass = "bg-zinc-900/20 text-zinc-600 border border-zinc-900/60"; // Future
                   if (!isFuture) {
@@ -459,7 +461,7 @@ export default function DashboardPage() {
                           ? `Day ${day}: ${dayMealsSum} total meals logged`
                           : `Day ${day}: No meal logs added!`
                       }
-                      className={`aspect-square rounded-lg flex items-center justify-center text-xs font-bold font-sans cursor-pointer transition-colors shadow-sm ${cellClass}`}
+                      className={`aspect-square rounded-md sm:rounded-lg flex items-center justify-center text-[10px] sm:text-xs font-bold font-sans cursor-pointer transition-colors shadow-sm ${cellClass}`}
                     >
                       {day}
                     </div>
@@ -486,7 +488,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Helpful Instructions */}
-          <div className="p-6 rounded-2xl bg-zinc-900/40 border border-zinc-800 text-xs md:text-sm text-zinc-400 space-y-4 flex flex-col justify-between">
+          <div className="p-4 sm:p-6 rounded-2xl bg-zinc-900/40 border border-zinc-800 text-xs md:text-sm text-zinc-400 space-y-4 flex flex-col justify-between">
             <div className="space-y-3.5">
               <p className="text-base font-semibold text-zinc-200 font-sans">💡 Calculation Notes & Formulas</p>
               <div className="space-y-2 text-zinc-400">

@@ -233,18 +233,18 @@ export default function CostsPage() {
   return (
     <div className="flex-1 bg-zinc-950 text-zinc-50 font-sans text-sm md:text-base flex flex-col h-full overflow-hidden">
       {/* Sticky Upper Action Bar */}
-      <div className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-md px-6 py-6 md:px-8 border-b border-zinc-900 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-md px-4 sm:px-6 md:px-8 py-4 sm:py-6 border-b border-zinc-900 shrink-0">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Bazar & Costs Log</h1>
-          <p className="text-sm text-zinc-400">Log out-of-pocket bazar shopping and utility bill payments</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white">Bazar & Costs Log</h1>
+          <p className="text-xs sm:text-sm text-zinc-400">Log out-of-pocket bazar shopping and utility bill payments</p>
         </div>
       </div>
 
       {/* Scrollable Page Content */}
-      <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
           {/* Left Column: Cost Input Form */}
-          <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-6 backdrop-blur">
+          <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-4 sm:p-6 space-y-5 sm:space-y-6 backdrop-blur">
             <div>
               <h2 className="text-base font-semibold text-zinc-200 font-sans">Record a Cost</h2>
               <p className="text-xs text-zinc-500 font-sans">Record spending for foods, utilities or others</p>
@@ -327,16 +327,16 @@ export default function CostsPage() {
                         const isChecked = selectedSharedMembers[m.id] || false;
                         return (
                           <div key={m.id} className="flex items-center justify-between gap-2">
-                            <label className="flex items-center gap-2 text-xs text-zinc-300 cursor-pointer hover:text-white transition-colors truncate w-36 font-sans">
+                            <label className="flex items-center gap-2 text-xs text-zinc-300 cursor-pointer hover:text-white transition-colors truncate min-w-0 flex-1 font-sans">
                               <input
                                 type="checkbox"
                                 checked={isChecked}
                                 onChange={() => handleToggleMemberShare(m.id)}
-                                className="rounded border-zinc-800 bg-zinc-950 text-indigo-600 focus:ring-0"
+                                className="rounded border-zinc-800 bg-zinc-950 text-indigo-600 focus:ring-0 shrink-0"
                               />
-                              {m.full_name || m.email}
+                              <span className="truncate">{m.full_name || m.email}</span>
                             </label>
-                            
+
                             {isCustomMode && isChecked && (
                               <div className="flex items-center gap-1.5 shrink-0">
                                 <input
@@ -346,7 +346,7 @@ export default function CostsPage() {
                                   required
                                   value={customShares[m.id] || ""}
                                   onChange={(e) => handleCustomShareChange(m.id, e.target.value)}
-                                  className="w-16 text-right bg-zinc-950 border border-zinc-800 py-1 px-1.5 rounded text-xs text-white placeholder:text-zinc-600"
+                                  className="w-14 sm:w-16 text-right bg-zinc-950 border border-zinc-800 py-1 px-1.5 rounded text-xs text-white placeholder:text-zinc-600"
                                 />
                                 <span className="text-[10px] text-zinc-500 font-sans">TK</span>
                               </div>
@@ -401,8 +401,8 @@ export default function CostsPage() {
           </div>
 
           {/* Right Column: Cost Entries Table */}
-          <div className="lg:col-span-2 bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur flex flex-col h-[640px]">
-            <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900/55 flex justify-between items-center shrink-0">
+          <div className="lg:col-span-2 bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden backdrop-blur flex flex-col h-[560px] sm:h-[640px]">
+            <div className="px-4 sm:px-6 py-4 border-b border-zinc-800 bg-zinc-900/55 flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-center shrink-0">
               <div>
                 <h2 className="font-semibold text-sm md:text-base text-zinc-200 font-sans">Cost Register</h2>
                 <p className="text-xs text-zinc-500 font-sans">Record logs for the current month view</p>
@@ -412,7 +412,7 @@ export default function CostsPage() {
                 <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                  className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-300 py-1.5 px-3 rounded-lg cursor-pointer pr-8 appearance-none"
+                  className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-300 py-1.5 px-3 rounded-lg cursor-pointer pr-7 appearance-none"
                 >
                   {months.map((m) => (
                     <option key={m.value} value={m.value}>
@@ -423,7 +423,7 @@ export default function CostsPage() {
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(Number(e.target.value))}
-                  className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-300 py-1.5 px-3 rounded-lg cursor-pointer pr-8 appearance-none"
+                  className="bg-zinc-950 text-xs border border-zinc-800 focus:ring-0 text-zinc-300 py-1.5 px-3 rounded-lg cursor-pointer pr-7 appearance-none"
                 >
                   {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((y) => (
                     <option key={y} value={y}>
@@ -435,16 +435,16 @@ export default function CostsPage() {
             </div>
 
             <div className="flex-1 overflow-auto">
-              <table className="w-full text-left text-sm text-zinc-300 border-collapse">
+              <table className="w-full text-left text-sm text-zinc-300 border-collapse min-w-[720px]">
                 <thead className="bg-zinc-950/80 text-xs text-zinc-400 border-b border-zinc-800 uppercase tracking-wider sticky top-0 z-10">
                   <tr>
-                    <th className="px-6 py-3.5 bg-zinc-950">Date</th>
-                    <th className="px-6 py-3.5">Spender</th>
-                    <th className="px-6 py-3.5">Category</th>
-                    <th className="px-6 py-3.5">Description</th>
-                    <th className="px-6 py-3.5">Share Details</th>
-                    <th className="px-6 py-3.5">Amount</th>
-                    <th className="px-6 py-3.5 text-right">Action</th>
+                    <th className="px-4 sm:px-6 py-3.5 bg-zinc-950">Date</th>
+                    <th className="px-4 sm:px-6 py-3.5">Spender</th>
+                    <th className="px-4 sm:px-6 py-3.5">Category</th>
+                    <th className="px-4 sm:px-6 py-3.5">Description</th>
+                    <th className="px-4 sm:px-6 py-3.5">Share Details</th>
+                    <th className="px-4 sm:px-6 py-3.5">Amount</th>
+                    <th className="px-4 sm:px-6 py-3.5 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-800/40">
@@ -459,7 +459,7 @@ export default function CostsPage() {
                       const mappedSpender = c.profiles?.full_name || "Unknown";
                       const isOwner = c.added_by === profile?.id || profile?.role === "super_admin";
                       const catName = categories.find((cat) => cat.value === c.cost_category)?.name || c.cost_category;
-                      
+
                       let shareLabel = "All Members";
                       if (c.shared_by) {
                         if (Array.isArray(c.shared_by)) {
@@ -472,23 +472,23 @@ export default function CostsPage() {
 
                       return (
                         <tr key={c.id} className="hover:bg-zinc-900/10 transition-colors text-sm">
-                          <td className="px-6 py-4 text-zinc-400 font-medium whitespace-nowrap">{c.date}</td>
-                          <td className="px-6 py-4 text-zinc-200 font-semibold">{mappedSpender}</td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-4 sm:px-6 py-4 text-zinc-400 font-medium whitespace-nowrap">{c.date}</td>
+                          <td className="px-4 sm:px-6 py-4 text-zinc-200 font-semibold whitespace-nowrap">{mappedSpender}</td>
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                             <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs">
                               {catName}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-zinc-300 max-w-[120px] truncate" title={c.items}>
+                          <td className="px-4 sm:px-6 py-4 text-zinc-300 max-w-[120px] truncate" title={c.items}>
                             {c.items}
                           </td>
-                          <td className="px-6 py-4 text-zinc-400 whitespace-nowrap">
+                          <td className="px-4 sm:px-6 py-4 text-zinc-400 whitespace-nowrap">
                             <span className="text-xs border border-zinc-800/80 px-2 py-0.5 rounded bg-zinc-900/40 font-medium font-sans">
                               👤 {shareLabel}
                             </span>
                           </td>
-                          <td className="px-6 py-4 font-bold text-white whitespace-nowrap">{c.amount.toFixed(2)} TK</td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-4 sm:px-6 py-4 font-bold text-white whitespace-nowrap">{c.amount.toFixed(2)} TK</td>
+                          <td className="px-4 sm:px-6 py-4 text-right">
                             {isOwner && (
                               <button
                                 onClick={() => handleDeleteCost(c.id)}

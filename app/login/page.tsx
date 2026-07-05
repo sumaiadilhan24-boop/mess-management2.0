@@ -39,9 +39,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-center bg-zinc-950 text-zinc-50 relative px-6 py-12 lg:px-8 font-sans">
+    <div className="flex-1 flex flex-col justify-center bg-zinc-950 text-zinc-50 relative px-4 py-12 sm:px-6 lg:px-8 font-sans">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-950/30 via-zinc-950 to-zinc-950 pointer-events-none" />
-      
+
       <div className="sm:mx-auto sm:w-full sm:max-w-sm z-10">
         <Link href="/" className="flex justify-center items-center gap-3 mb-6">
           <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
@@ -49,13 +49,13 @@ export default function LoginPage() {
           </div>
           <span className="font-semibold text-lg text-zinc-200">Mess Management</span>
         </Link>
-        <h2 className="text-center text-2xl font-bold tracking-tight text-white">
+        <h2 className="text-center text-xl sm:text-2xl font-bold tracking-tight text-white">
           Sign in to your account
         </h2>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-sm z-10">
-        <div className="bg-zinc-900/60 border border-zinc-800/80 p-8 rounded-2xl backdrop-blur-xl shadow-xl">
+        <div className="bg-zinc-900/60 border border-zinc-800/80 p-5 sm:p-8 rounded-2xl backdrop-blur-xl shadow-xl">
           {errorMsg && (
             <div className="mb-4 p-3 rounded-lg bg-red-950/50 border border-red-800 text-red-200 text-xs">
               {errorMsg}
