@@ -420,7 +420,7 @@ export default function SettingsPage() {
                   </p>
                   <button
                     onClick={handleOpenWipeModal}
-                    className="w-full py-2 bg-red-650 hover:bg-red-500 text-white text-xs font-semibold rounded-lg transition-colors border border-red-800 shadow"
+                    className="w-full py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-semibold rounded-lg transition-colors border border-red-800 shadow"
                   >
                     Wipe Everything
                   </button>
@@ -465,7 +465,7 @@ export default function SettingsPage() {
               <button
                 onClick={handleWipeData}
                 disabled={wiping || wipeConfirmText !== (mess?.name || "RESET")}
-                className="px-4 py-2 bg-red-650 hover:bg-red-500 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors shadow-md"
+                className="px-4 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors shadow-md"
               >
                 {wiping ? "Wiping..." : "Confirm & Delete Everything"}
               </button>
