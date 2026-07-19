@@ -208,7 +208,7 @@ export default function SettlementsPage() {
       .filter((c) => c.cost_category === "global_bazar")
       .reduce((sum, c) => sum + Number(c.amount || 0), 0);
     const totalMealCost = totalMealBazarCost + totalGlobalBazarCost;
-    const mealRate = totalMeals > 0 ? totalMealBazarCost / totalMeals : 0;
+    const mealRate = totalMeals > 0 ? totalMealCost / totalMeals : 0;
 
     const totalOtherCost = monthCosts
       .filter((c) => c.cost_category !== "meal_bazar" && c.cost_category !== "global_bazar")
